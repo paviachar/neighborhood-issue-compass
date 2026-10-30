@@ -63,8 +63,8 @@ function Report() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!pin) return toast.error("Tap the map to drop a pin at the problem location.");
-    if (description.trim().length < 10) return toast.error("Please describe the problem (at least 10 characters).");
+    if (!pin) { toast.error("Tap the map to drop a pin at the problem location."); return; }
+    if (description.trim().length < 10) { toast.error("Please describe the problem (at least 10 characters)."); return; }
     setBusy(true);
     let finalCat: Category = category === "auto" ? guess : category;
     let summary = summarize(description, finalCat, area || undefined);

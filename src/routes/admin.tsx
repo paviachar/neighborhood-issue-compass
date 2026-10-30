@@ -140,7 +140,7 @@ function Admin() {
 
       <Sheet open={!!selected} onOpenChange={(o) => !o && setSel(null)}>
         <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
-          {selected && <Detail c={selected} a={analysis[selected.id]} all={all} onOpen={setSel} />}
+          {selected && <Detail c={selected} a={analysis[selected.id]!} all={all} onOpen={setSel} />}
         </SheetContent>
       </Sheet>
     </main>

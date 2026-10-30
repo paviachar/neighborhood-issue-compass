@@ -80,7 +80,7 @@ export function buildSeed(): Complaint[] {
   for (let i = 0; i < 44; i++) {
     const [category, title, description] = TEMPLATES[i % TEMPLATES.length]!;
     // Clusters: weight first four areas more heavily
-    const area = AREAS[i % 3 === 0 ? i % 4 : (i * 7) % AREAS.length];
+    const area = AREAS[i % 3 === 0 ? i % 4 : (i * 7) % AREAS.length]!;
     const lat = area.lat + (rnd() - 0.5) * 0.008;
     const lng = area.lng + (rnd() - 0.5) * 0.008;
     const created = SEED_NOW - Math.floor(rnd() * 21 * 86400000);

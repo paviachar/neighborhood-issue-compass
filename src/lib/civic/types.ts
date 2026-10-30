@@ -47,15 +47,15 @@ export interface Complaint {
   lat: number;
   lng: number;
   area: string;
-  photo?: string;
+  photo?: string | undefined;
   createdAt: string;
   status: Status;
-  department?: Department;
+  department?: Department | undefined;
   history: HistoryEntry[];
   summary: string;
   aiSource: "ai" | "rules";
-  linkedTo?: string;
-  reporter?: string;
+  linkedTo?: string | undefined;
+  reporter?: string | undefined;
 }
 
 export interface PriorityBreakdown {
