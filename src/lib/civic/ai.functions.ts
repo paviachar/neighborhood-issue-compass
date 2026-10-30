@@ -32,7 +32,7 @@ async function callAI(instructions: string, prompt: string): Promise<string> {
 }
 
 export const aiAnalyzeComplaint = createServerFn({ method: "POST" })
-  .inputValidator((i: unknown) => z.object({ title: z.string().max(200), description: z.string().min(5).max(3000) }).parse(i))
+  .validator((i: unknown) => z.object({ title: z.string().max(200), description: z.string().min(5).max(3000) }).parse(i))
   .handler(async ({ data }) => {
     try {
       const text = await callAI(
@@ -51,7 +51,7 @@ export const aiAnalyzeComplaint = createServerFn({ method: "POST" })
   });
 
 export const aiActionBrief = createServerFn({ method: "POST" })
-  .inputValidator((i: unknown) => z.object({ context: z.string().min(5).max(8000), scope: z.enum(["complaint", "city"]) }).parse(i))
+  .validator((i: unknown) => z.object({ context: z.string().min(5).max(8000), scope: z.enum(["complaint", "city"]) }).parse(i))
   .handler(async ({ data }) => {
     try {
       const text = await callAI(
