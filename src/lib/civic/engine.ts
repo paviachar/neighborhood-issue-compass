@@ -151,7 +151,7 @@ export function detectHotspots(all: Complaint[], radius = 500): Hotspot[] {
     members.forEach((m) => used.add(m.id));
     const counts: Record<string, number> = {};
     members.forEach((m) => (counts[m.category] = (counts[m.category] ?? 0) + 1));
-    const topCategory = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0] as Category;
+    const topCategory = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]![0] as Category;
     spots.push({
       lat: members.reduce((s, m) => s + m.lat, 0) / members.length,
       lng: members.reduce((s, m) => s + m.lng, 0) / members.length,
@@ -178,7 +178,7 @@ export function ruleBrief(c: Complaint, a: Analysis): string {
   };
   return [
     `Issue: ${c.summary}`,
-    `Priority: ${p.total}/100 (${p.level}) — ${p.reasons[0].split(":")[1]?.trim()}`,
+    `Priority: ${p.total}/100 (${p.level}) — ${p.reasons[0]!.split(":")[1]?.trim()}`,
     `Recommended action: ${action[c.category]}`,
     `Owner: ${c.department ?? "Unassigned"}. ${a.duplicates.length ? `Close ${a.duplicates.length} linked duplicate(s) together.` : "No duplicates detected."}`,
   ].join("\n");
