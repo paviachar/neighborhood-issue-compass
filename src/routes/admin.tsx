@@ -46,14 +46,14 @@ function Admin() {
   const rows = useMemo(() => {
     const t = q.toLowerCase();
     return all
-      .filter((c) => (cat === "all" || c.category === cat) && (st === "all" || c.status === st) && (lvl === "all" || analysis[c.id]?.priority.level === lvl))
+      .filter((c) => (cat === "all" || c.category === cat) && (st === "all" || c.status === st) && (lvl === "all" || analysis[c.id]!?.priority.level === lvl))
       .filter((c) => !t || `${c.id} ${c.title} ${c.description} ${c.area}`.toLowerCase().includes(t))
-      .sort((a, b) => analysis[b.id].priority.total - analysis[a.id].priority.total);
+      .sort((a, b) => analysis[b.id]!.priority.total - analysis[a.id]!.priority.total);
   }, [all, analysis, q, cat, st, lvl]);
 
   const open = all.filter((c) => c.status !== "RESOLVED");
-  const critical = open.filter((c) => analysis[c.id].priority.level === "Critical").length;
-  const dupCount = all.filter((c) => analysis[c.id].duplicates.length > 0 && !c.linkedTo).length;
+  const critical = open.filter((c) => analysis[c.id]!.priority.level === "Critical").length;
+  const dupCount = all.filter((c) => analysis[c.id]!.duplicates.length > 0 && !c.linkedTo).length;
   const selected = sel ? all.find((c) => c.id === sel) : undefined;
 
   return (
@@ -93,7 +93,7 @@ function Admin() {
               </thead>
               <tbody>
                 {rows.map((c) => {
-                  const a = analysis[c.id];
+                  const a = analysis[c.id]!;
                   return (
                     <tr key={c.id} onClick={() => setSel(c.id)} className="cursor-pointer border-t hover:bg-secondary/50">
                       <td className="p-3"><PriorityBadge p={a.priority} /></td>
@@ -117,7 +117,7 @@ function Admin() {
               center={CITY_CENTER}
               zoom={12}
               className="h-[560px] w-full rounded-xl border"
-              markers={all.map((c) => ({ id: c.id, lat: c.lat, lng: c.lng, color: c.status === "RESOLVED" ? "#16a34a" : LEVEL_COLOR[analysis[c.id].priority.level], label: `${c.title} · ${analysis[c.id].priority.total}` }))}
+              markers={all.map((c) => ({ id: c.id, lat: c.lat, lng: c.lng, color: c.status === "RESOLVED" ? "#16a34a" : LEVEL_COLOR[analysis[c.id]!.priority.level], label: `${c.title} · ${analysis[c.id]!.priority.total}` }))}
               circles={hotspots.map((h) => ({ lat: h.lat, lng: h.lng, radius: 550, label: `Hotspot: ${h.count} complaints (${h.topCategory})` }))}
               onMarkerClick={setSel}
             />
@@ -259,7 +259,7 @@ function Detail({ c, a, all, onOpen }: { c: Complaint; a: Analysis; all: Complai
 function Analytics({ all, analysis }: { all: Complaint[]; analysis: Record<string, Analysis> }) {
   const byCat = CATEGORIES.map((k) => ({ name: k, open: all.filter((c) => c.category === k && c.status !== "RESOLVED").length, resolved: all.filter((c) => c.category === k && c.status === "RESOLVED").length }));
   const byStatus = STATUSES.map((s) => ({ name: s, value: all.filter((c) => c.status === s).length }));
-  const byLevel = (["Critical", "High", "Medium", "Low"] as const).map((l) => ({ name: l, value: all.filter((c) => analysis[c.id].priority.level === l).length }));
+  const byLevel = (["Critical", "High", "Medium", "Low"] as const).map((l) => ({ name: l, value: all.filter((c) => analysis[c.id]!.priority.level === l).length }));
   const days: Record<string, number> = {};
   all.forEach((c) => { const d = c.createdAt.slice(5, 10); days[d] = (days[d] ?? 0) + 1; });
   const trend = Object.entries(days).sort().map(([d, n]) => ({ d, n }));
@@ -288,17 +288,17 @@ function CityBrief({ all, analysis, hotspots }: { all: Complaint[]; analysis: Re
   const brief = useServerFn(aiActionBrief);
   const [text, setText] = useState<{ v: string; src: string } | null>(null);
   const [busy, setBusy] = useState(false);
-  const top = all.filter((c) => c.status !== "RESOLVED").sort((a, b) => analysis[b.id].priority.total - analysis[a.id].priority.total).slice(0, 8);
+  const top = all.filter((c) => c.status !== "RESOLVED").sort((a, b) => analysis[b.id]!.priority.total - analysis[a.id]!.priority.total).slice(0, 8);
   const fallback = () =>
     [
-      `- ${all.filter((c) => c.status !== "RESOLVED").length} open complaints; ${top.filter((c) => analysis[c.id].priority.level === "Critical").length} critical in the top 8.`,
-      ...top.slice(0, 3).map((c) => `- Fix first: ${c.title} at ${c.area} (score ${analysis[c.id].priority.total}) → ${c.department ?? "assign department"}.`),
+      `- ${all.filter((c) => c.status !== "RESOLVED").length} open complaints; ${top.filter((c) => analysis[c.id]!.priority.level === "Critical").length} critical in the top 8.`,
+      ...top.slice(0, 3).map((c) => `- Fix first: ${c.title} at ${c.area} (score ${analysis[c.id]!.priority.total}) → ${c.department ?? "assign department"}.`),
       ...hotspots.slice(0, 2).map((h) => `- Hotspot ${h.area}: ${h.count} open issues, mostly ${h.topCategory}; send a combined crew.`),
       `- Link pending duplicates to avoid double dispatch.`,
     ].join("\n");
   const gen = async () => {
     setBusy(true);
-    const ctx = `Top open complaints:\n${top.map((c) => `${c.id} | ${c.category} | ${c.area} | score ${analysis[c.id].priority.total} | ${c.status} | ${c.department ?? "unassigned"} | ${c.summary}`).join("\n")}\nHotspots:\n${hotspots.map((h) => `${h.area}: ${h.count} open, mostly ${h.topCategory}`).join("\n")}`;
+    const ctx = `Top open complaints:\n${top.map((c) => `${c.id} | ${c.category} | ${c.area} | score ${analysis[c.id]!.priority.total} | ${c.status} | ${c.department ?? "unassigned"} | ${c.summary}`).join("\n")}\nHotspots:\n${hotspots.map((h) => `${h.area}: ${h.count} open, mostly ${h.topCategory}`).join("\n")}`;
     try {
       const r = await brief({ data: { context: ctx, scope: "city" } });
       setText(r.ok ? { v: r.text, src: "AI" } : { v: fallback(), src: "Rule-based fallback" });
