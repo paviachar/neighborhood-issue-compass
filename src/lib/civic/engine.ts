@@ -109,7 +109,7 @@ export function scorePriority(c: Complaint, dupCount: number, now = Date.now()):
   reasons.push(`Impact ${impact}/10: ${ih.length ? `affects ${ih.slice(0, 3).join(", ")}` : "localised impact"}.`);
 
   const total = safety + urgency + duplicates + impact;
-  const level = total >= 75 ? "Critical" : total >= 55 ? "High" : total >= 35 ? "Medium" : "Low";
+  const level = total >= 65 ? "Critical" : total >= 50 ? "High" : total >= 35 ? "Medium" : "Low";
   return { safety, urgency, duplicates, impact, total, level, reasons };
 }
 
