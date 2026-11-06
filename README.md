@@ -19,7 +19,7 @@ Implement as a live web application:
 
 This project was built with [Lovable](https://lovable.dev).
 
-**Live app**: https://neighborhood-issue-compass.lovable.app
+DEPLOYMENT LINK :https://neighborhood-issue-compass.vercel.app/report
 
 ## Build with Lovable
 
